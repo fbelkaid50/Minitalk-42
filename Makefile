@@ -1,47 +1,54 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
+#    makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: fbelkaid <fbelkaid@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/06/02 10:19:02 by fbelkaid          #+#    #+#              #
-#    Updated: 2024/06/16 18:15:18 by fbelkaid         ###   ########.fr        #
+#    Created: 2024/08/26 07:38:41 by fbelkaid          #+#    #+#              #
+#    Updated: 2024/10/22 11:08:38 by fbelkaid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS_DIRS = ./src
-INC_DIR = ./Includes
-CFLAGS = -Wall -Wextra -Werror
+NAME = minishell
+CC = gcc -g
+CFLAGS = -Wall -Wextra -Werror 
+READ = -lreadline -L ~/goinfre/homebrew/opt/readline/lib -I ~/goinfre/homebrew/opt/readline/include 
+LDFLAGS = -lreadline
+RM = rm -f
+P_SRC= ./manda/main.c  ./manda/utils.c ./manda/handle_signals.c ./manda/check_syntax.c ./manda/tokenizing_inputs.c ./manda/parcing.c ./manda/parcing_utils.c ./manda/parcing_Wredir.c
+# EXEC_SRC=	./execution/execute_builtin.c \
+# 			./execution/execute_line.c \
+# 		./execution/execution_utils.c\
+# 			./execution/execution_utils2.c \
+# 			./execution/pipes.c \
+# 			./execution/redirections.c \
+# 			./execution/safe_functions.c
 
-SRCS_SERVER = $(SRCS_DIRS)/server.c $(SRCS_DIRS)/tools.c $(SRCS_DIRS)/linked_list.c
+# BUILTIN_SRCS=	./builtins/cd.c \
+# 				./builtins/echo.c \
+# 				./builtins/env_utils.c \
+# 				./builtins/env.c \
+# 				./builtins/exit.c \
+# 				./builtins/export.c \
+# 				./builtins/pwd.c \
+# 				./builtins/unset.c
+# LIBF=./libft/libftprintf.a
 
-SRCS_CLIENT = $(SRCS_DIRS)/client.c $(SRCS_DIRS)/tools.c $(SRCS_DIRS)/linked_list.c
+OBJ= $(P_SRC:.c=.o) $(EXEC_SRC:.c=.o) $(BUILTIN_SRCS:.c=.o) 
+	# $(CC) $(CFLAGS) $(READ) -c ./manda/handle_signals.c -o handle_signals.o
+%.o: %.c
+	$(CC) $(CFLAGS) -I ~/goinfre/homebrew/opt/readline/include  -c $< -o $@
 
-SRCS_BSERVER = $(SRCS_DIRS)/server_bonus.c $(SRCS_DIRS)/tools.c $(SRCS_DIRS)/linked_list.c
+$(NAME): $(OBJ)
+	$(CC) $(OBJ) $(LIBF) $(READ) -o $(NAME)
 
-SRCS_BCLIENT = $(SRCS_DIRS)/client_bonus.c $(SRCS_DIRS)/tools.c $(SRCS_DIRS)/linked_list.c
-
-NAME = server client
-
-CC= cc
-AR= rm -f
-all: $(NAME) $(INC_DIR)
-
-$(NAME): $(SRCS_SERVER) $(SRCS_CLIENT)
-	 @$(CC) $(CFLAGS) $(SRCS_SERVER) -I $(INC_DIR)  -o server
-	 @$(CC) $(CFLAGS) $(SRCS_CLIENT) -I $(INC_DIR) -o client
-
-
-	
-bonus : 
-	@$(CC) $(CFLAGS) $(SRCS_BSERVER) -I $(INC_DIR)  -o server_bonus
-	@$(CC) $(CFLAGS) $(SRCS_BCLIENT) -I $(INC_DIR)  -o client_bonus
+all: $(NAME)
 
 clean:
-	@$(AR) $(NAME) 
+	@$(RM) $(OBJ)
 
 fclean: clean
-	@$(AR) $(NAME) server_bonus client_bonus
+	@$(RM) $(NAME)
 
 re: fclean all

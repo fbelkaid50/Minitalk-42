@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   linked_list.h                                      :+:      :+:    :+:   */
+/*   handle_signals.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fbelkaid <fbelkaid@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/16 12:49:45 by fbelkaid          #+#    #+#             */
-/*   Updated: 2024/06/16 12:53:32 by fbelkaid         ###   ########.fr       */
+/*   Created: 2024/08/29 11:47:18 by fbelkaid          #+#    #+#             */
+/*   Updated: 2024/10/18 16:24:15 by fbelkaid         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LINKED_LIST_H
-# define LINKED_LIST_H
-# include <stdlib.h>
+#include "../minishell.h"
 
-typedef struct s_list
+void handler(int sig) {
+    if (sig == SIGINT) {
+        printf("\n");
+        rl_on_new_line();
+        rl_replace_line("", 0);
+        rl_redisplay();
+    }
+}
+
+void	handell_sig(void)
 {
-	void			*content;
-	struct s_list	*next;
-}					t_list;
-
-t_list				*ft_lstnew(void *content);
-void				ft_lstadd_back(t_list **lst, t_list *new);
-void				ft_free_zmer(t_list **lst, void (*del)(void *));
-int					adding_back(t_list **strptr, char c);
-void				free_char(void *c);
-
-#endif
+	signal(SIGINT, &handler);
+	signal(SIGQUIT, SIG_IGN);
+}
